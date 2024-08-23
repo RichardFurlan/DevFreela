@@ -1,0 +1,55 @@
+# Rider specific files
+.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+.idea/dictionaries/
+.idea/httpRequests/
+.idea/dataSources/
+.idea/dataSources.ids
+.idea/dataSources.xml
+.idea/dataSources.local.xml
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/**/*.iml
+.idea/contentModel.xml
+.idea/modules.xml
+
+# Visual Studio
+*.suo
+*.user
+.vs/
+
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# NuGet
+*.nupkg
+# The packages folder can be ignored if NuGet restore is used
+[Pp]ackages/
+# Uncomment if necessary however generally it will be regenerated when needed
+# [Pp]ackages/**/EntityFramework.dll
+# [Pp]ackages/**/EntityFramework.xml
+
+# Rider & VS Code temporary files
+.vscode/
+.idea/
+
+# User-specific files
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Build reports
+UpgradeLog.htm
+UpgradeLog*.xml
+
+# Auto-generated files
+_ReSharper.*
+resharper.xml
