@@ -1,0 +1,6 @@
+﻿services:
+  devfreela.api:
+    image: devfreela.api
+    build:
+      context: .
+      dockerfile: DevFreela.API/Dockerfile
