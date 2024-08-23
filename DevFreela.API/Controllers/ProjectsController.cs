@@ -13,7 +13,7 @@ public class ProjectsController : ControllerBase
         _config = options.Value;
     }
     [HttpGet]
-    public IActionResult Get(string search)
+    public IActionResult Get(string search = "")
     {
         return Ok();
     }
