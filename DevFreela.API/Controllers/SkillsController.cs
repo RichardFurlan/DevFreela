@@ -1,3 +1,4 @@
+using DevFreela.API.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers;
@@ -12,7 +13,7 @@ public class SkillsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Post()
+    public IActionResult Post(CreateSkillDTO model )
     {
         return NoContent();
     }

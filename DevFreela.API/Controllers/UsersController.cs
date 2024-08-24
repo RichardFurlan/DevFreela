@@ -1,3 +1,4 @@
+using DevFreela.API.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers;
@@ -6,10 +7,18 @@ namespace DevFreela.API.Controllers;
 public class UsersController : ControllerBase
 {
     [HttpPost]
-    public IActionResult Post()
+    public IActionResult Post(CreateUserDTO model)
     {
         return NoContent();
     }
+
+    [HttpPost("{id}/skill")]
+    public IActionResult PostSkill(UserSkillDTO model)
+    {
+        return NoContent();
+    }
+    
+    
 
     [HttpPost("{id}/profile-picture")]
     public IActionResult PostProfilePicture(IFormFile file)

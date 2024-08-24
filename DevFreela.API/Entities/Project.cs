@@ -8,11 +8,11 @@ public class Project : BaseEntity
     {
         
     }
-    public Project(string title, string description, int idCliente, int idFreelancer, decimal totalCost) : base()
+    public Project(string title, string description, int idClient, int idFreelancer, decimal totalCost) : base()
     {
         Title = title;
         Description = description;
-        IdCliente = idCliente;
+        IdClient = idClient;
         IdFreelancer = idFreelancer;
         TotalCost = totalCost;
 
@@ -22,7 +22,7 @@ public class Project : BaseEntity
 
     public string Title { get; private set; }
     public string Description { get; private set; }
-    public int IdCliente { get; private set; }
+    public int IdClient { get; private set; }
     public User Client { get; private set; }
     public int IdFreelancer { get; private set; }
     public User Freelancer { get; private set; }
