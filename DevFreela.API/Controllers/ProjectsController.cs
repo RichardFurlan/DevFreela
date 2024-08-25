@@ -10,11 +10,9 @@ namespace DevFreela.API.Controllers;
 [ApiController]
 public class ProjectsController : ControllerBase
 {    
-    private readonly FreelanceTotalCostConfig _config;
     private readonly DevFreelaDbContext _context;
-    public ProjectsController(IOptions<FreelanceTotalCostConfig> options, DevFreelaDbContext context)
+    public ProjectsController(DevFreelaDbContext context)
     {
-        _config = options.Value;
         _context = context;
     }
     [HttpGet]
@@ -40,6 +38,10 @@ public class ProjectsController : ControllerBase
             .Where(p => !p.IsDeleted)
             .SingleOrDefault(p => p.Id == id);
 
+        if (project is null)
+        {
+            return NotFound();
+        }
 
         var model = ProjectViewModel.FromEntity(project);
         
@@ -49,11 +51,6 @@ public class ProjectsController : ControllerBase
     [HttpPost]
     public IActionResult Post(CreateProjectDTO model)
     {
-        if (model.TotalCost < _config.Minimum || model.TotalCost > _config.Maximum)
-        {
-            return BadRequest("Numero fora dos limites.");
-        }
-
         var project = model.ToEntity();
         _context.Projects.Add(project);
         _context.SaveChanges();

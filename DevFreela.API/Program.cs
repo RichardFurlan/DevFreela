@@ -6,11 +6,13 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.Configure<FreelanceTotalCostConfig>(
-    builder.Configuration.GetSection("FreelancerTotalCostConfig")
-);
 
-builder.Services.AddDbContext<DevFreelaDbContext>(o => o.UseInMemoryDatabase("DevFreelaDb"));
+// builder.Services.AddDbContext<DevFreelaDbContext>(o => o.UseInMemoryDatabase("DevFreelaDb"));
+
+var connectionString = builder.Configuration.GetConnectionString("DevFreelaDb");
+
+builder.Services.AddDbContext<DevFreelaDbContext>(o => o.UseNpgsql(connectionString));
+
 
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddProblemDetails();
