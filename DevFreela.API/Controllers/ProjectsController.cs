@@ -1,5 +1,8 @@
 using DevFreela.API.DTOs;
+using DevFreela.API.Entities;
+using DevFreela.API.Persistence;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace DevFreela.API.Controllers;
@@ -8,20 +11,39 @@ namespace DevFreela.API.Controllers;
 public class ProjectsController : ControllerBase
 {    
     private readonly FreelanceTotalCostConfig _config;
-    public ProjectsController(IOptions<FreelanceTotalCostConfig> options)
+    private readonly DevFreelaDbContext _context;
+    public ProjectsController(IOptions<FreelanceTotalCostConfig> options, DevFreelaDbContext context)
     {
         _config = options.Value;
+        _context = context;
     }
     [HttpGet]
     public IActionResult Get(string search = "")
     {
-        return Ok();
+        var projects = _context.Projects
+            .Include(p => p.Client)
+            .Include(p => p.Freelancer)
+            .Where(p => !p.IsDeleted).ToList();
+
+        var model = projects.Select(ProjectItemViewModel.FromEntity).ToList();
+        
+        return Ok(model);
     }
 
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
-        return Ok();
+        var project = _context.Projects
+            .Include(p => p.Client)
+            .Include(p => p.Freelancer)
+            .Include(p => p.Comments)
+            .Where(p => !p.IsDeleted)
+            .SingleOrDefault(p => p.Id == id);
+
+
+        var model = ProjectViewModel.FromEntity(project);
+        
+        return Ok(model);
     }
 
     [HttpPost]
@@ -31,36 +53,95 @@ public class ProjectsController : ControllerBase
         {
             return BadRequest("Numero fora dos limites.");
         }
+
+        var project = model.ToEntity();
+        _context.Projects.Add(project);
+        _context.SaveChanges();
+        
         return CreatedAtAction(nameof(GetById), new { id = 1 }, model);
     }
 
     [HttpPut("{id}")]
     public IActionResult Put(int id, UpdateProjectDTO model)
     {
+        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+            
+        project.Update(model.Title, model.Description, model.TotalCost);
+        _context.Projects.Update(project);
+        _context.SaveChanges();
+        
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
+        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+        
+        project.SetAsDeleted();
+        _context.Projects.Update(project);
+        _context.SaveChanges();
+        
         return NoContent();
     }
 
     [HttpPut("{id}/start")]
     public IActionResult Start(int id)
     {
+        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+        
+        project.Start();
+        _context.Projects.Update(project);
+        _context.SaveChanges();
+        
         return NoContent();
     }
     
     [HttpPut("{id}/complete")]
     public IActionResult Complete(int id)
     {
+        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+        
+        project.Complete();
+        _context.Projects.Update(project);
+        _context.SaveChanges();
         return NoContent();
     }
 
     [HttpPost("{id}/comments")]
     public IActionResult Post(int id, CreateProjectCommentDTO model)
     {
+        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+
+        if (project is null)
+        {
+            return NotFound();
+        }
+
+        var comment = new ProjectComment(model.Content, model.IdProject, model.IdUser);
+        _context.ProjectComments.Add(comment);
+        _context.SaveChanges();
+        
         return Ok();
     }
 }

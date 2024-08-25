@@ -1,4 +1,6 @@
 using DevFreela.API.DTOs;
+using DevFreela.API.Entities;
+using DevFreela.API.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers;
@@ -6,15 +8,28 @@ namespace DevFreela.API.Controllers;
 [ApiController]
 public class SkillsController : ControllerBase
 {
+    private readonly DevFreelaDbContext _context;
+    public SkillsController(DevFreelaDbContext context)
+    {
+        _context = context;
+    }
     [HttpGet]
     public IActionResult GetAll()
     {
-        return Ok();
+        var skills = _context.Skills.ToList();
+        
+        //Criar Model para retorno
+        return Ok(skills);
     }
 
     [HttpPost]
-    public IActionResult Post(CreateSkillDTO model )
+    public IActionResult Post(CreateSkillDTO model)
     {
+        var skill = new Skill(model.Description);
+
+        _context.Skills.Add(skill);
+        _context.SaveChanges();
+        
         return NoContent();
     }
 }
