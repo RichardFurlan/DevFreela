@@ -1,0 +1,37 @@
+﻿services:
+  devfreela.api:
+    image: devfreela.api
+    build:
+      context: .
+      dockerfile: DevFreela.API/Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DevFreelaDb=Host=localhost;Port=5432;Database=devfreela;Username=devfreela_user;Password=123456
+    depends_on:
+      - db-devfreela
+
+  db-devfreela:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: devfreela_user
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: devfreela
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin-devfreela:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db-devfreela
+
+volumes:
+  postgres_data:  # Declarando o volume na raiz do arquivo
