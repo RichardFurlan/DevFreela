@@ -1,6 +1,6 @@
-using DevFreela.API.Enums;
+using DevFreela.Domain.Enums;
 
-namespace DevFreela.API.Entities;
+namespace DevFreela.Domain.Entities;
 
 public class Project : BaseEntity
 {
