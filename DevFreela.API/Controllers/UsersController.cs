@@ -37,7 +37,7 @@ public class UsersController : ControllerBase
     [HttpPost]
     public IActionResult Post(CreateUserDTO model)
     {
-        var user = new User(model.FullName, model.Email, model.BirthDate);
+        var user = new User(model.FullName, model.Email, model.BirthDate.ToUniversalTime());
 
         _context.Users.Add(user);
         _context.SaveChanges();
