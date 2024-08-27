@@ -1,22 +1,19 @@
 using DevFreela.API.DTOs;
+using DevFreela.Application.DTOs;
 using DevFreela.Domain.Entities;
 using DevFreela.Infrastructure.Persistence;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
-namespace DevFreela.API.Controllers;
-[Route("api/[controller]")]
-[ApiController]
-public class ProjectsController : ControllerBase
-{    
+namespace DevFreela.Application.Services;
+
+public class ProjectService : IProjectService
+{
     private readonly DevFreelaDbContext _context;
-    public ProjectsController(DevFreelaDbContext context)
+    public ProjectService(DevFreelaDbContext context)
     {
         _context = context;
     }
-    [HttpGet]
-    public IActionResult Get(string search = "", int page = 0, int size = 10)
+    public ResultViewModel<List<ProjectItemViewModel>> GetAll(string search = "", int page = 0, int size = 10)
     {
         var projects = _context.Projects
             .Include(p => p.Client)
@@ -27,12 +24,11 @@ public class ProjectsController : ControllerBase
             .ToList();
 
         var model = projects.Select(ProjectItemViewModel.FromEntity).ToList();
-        
-        return Ok(model);
+
+        return ResultViewModel<List<ProjectItemViewModel>>.Success(model);
     }
 
-    [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public ResultViewModel<ProjectViewModel> GetById(int id)
     {
         var project = _context.Projects
             .Include(p => p.Client)
@@ -40,109 +36,108 @@ public class ProjectsController : ControllerBase
             .Include(p => p.Comments)
             .Where(p => !p.IsDeleted)
             .SingleOrDefault(p => p.Id == id);
-
+        
         if (project is null)
         {
-            return NotFound();
+            return ResultViewModel<ProjectViewModel>.Error("Projeto não encontrado");
         }
-
+        
         var model = ProjectViewModel.FromEntity(project);
         
-        return Ok(model);
+        return ResultViewModel<ProjectViewModel>.Success(model);
     }
 
-    [HttpPost]
-    public IActionResult Post(CreateProjectDTO model)
+    public ResultViewModel<int> Insert(CreateProjectDTO model)
     {
         var project = model.ToEntity();
+        
         _context.Projects.Add(project);
         _context.SaveChanges();
         
-        return CreatedAtAction(nameof(GetById), new { id = 1 }, model);
+        return ResultViewModel<int>.Success(project.Id);
     }
 
-    [HttpPut("{id}")]
-    public IActionResult Put(int id, UpdateProjectDTO model)
+    public ResultViewModel Update(UpdateProjectDTO model)
     {
-        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+        var project = _context.Projects.SingleOrDefault(p => p.Id == model.IdProject);
 
         if (project is null)
         {
-            return NotFound();
+            return ResultViewModel.Error("Projeto não encontrado");
         }
             
         project.Update(model.Title, model.Description, model.TotalCost);
+        
         _context.Projects.Update(project);
         _context.SaveChanges();
         
-        return NoContent();
+        return ResultViewModel.Success();
     }
 
-    [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public ResultViewModel Delete(int id)
     {
         var project = _context.Projects.SingleOrDefault(p => p.Id == id);
 
         if (project is null)
         {
-            return NotFound();
+            return ResultViewModel.Error("Projeto não encontrado");
         }
         
         project.SetAsDeleted();
+        
         _context.Projects.Update(project);
         _context.SaveChanges();
-        
-        return NoContent();
+
+        return ResultViewModel.Success();
     }
 
-    [HttpPut("{id}/start")]
-    public IActionResult Start(int id)
+    public ResultViewModel Start(int id)
     {
         var project = _context.Projects.SingleOrDefault(p => p.Id == id);
 
         if (project is null)
         {
-            return NotFound();
+            return ResultViewModel.Error("Projeto não encontrado");
         }
         
         project.Start();
+        
         _context.Projects.Update(project);
         _context.SaveChanges();
-        
-        return NoContent();
+
+        return ResultViewModel.Success();
     }
-    
-    [HttpPut("{id}/complete")]
-    public IActionResult Complete(int id)
+
+    public ResultViewModel Complete(int id)
     {
         var project = _context.Projects.SingleOrDefault(p => p.Id == id);
 
         if (project is null)
         {
-            return NotFound();
+            return ResultViewModel.Error("Projeto não encontrado");
         }
         
         project.Complete();
+        
         _context.Projects.Update(project);
         _context.SaveChanges();
-        
-        return NoContent();
+
+        return ResultViewModel.Success();
     }
 
-    [HttpPost("{id}/comments")]
-    public IActionResult Post(int id, CreateProjectCommentDTO model)
+    public ResultViewModel InsertComment(int id, CreateProjectCommentDTO model)
     {
         var project = _context.Projects.SingleOrDefault(p => p.Id == id);
 
         if (project is null)
         {
-            return NotFound();
+            return ResultViewModel.Error("Projeto não encontrado");
         }
 
         var comment = new ProjectComment(model.Content, model.IdProject, model.IdUser);
         _context.ProjectComments.Add(comment);
         _context.SaveChanges();
         
-        return Ok();
+        return ResultViewModel.Success();
     }
 }
