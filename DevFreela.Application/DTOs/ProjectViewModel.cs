@@ -1,4 +1,4 @@
-using DevFreela.API.Entities;
+using DevFreela.Domain.Entities;
 
 namespace DevFreela.API.DTOs
 {

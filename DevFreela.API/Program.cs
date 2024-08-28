@@ -1,6 +1,7 @@
-using DevFreela.API.DTOs;
 using DevFreela.API.ExceptionHandler;
-using DevFreela.API.Persistence;
+using DevFreela.Application;
+using DevFreela.Application.Services;
+using DevFreela.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ var connectionString = builder.Configuration.GetConnectionString("DevFreelaDb");
 
 builder.Services.AddDbContext<DevFreelaDbContext>(o => o.UseNpgsql(connectionString));
 
+builder.Services.AddAplication();
 
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddProblemDetails();
