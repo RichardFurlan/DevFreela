@@ -13,7 +13,7 @@ public class ProjectService : IProjectService
     {
         _context = context;
     }
-    public ResultViewModel<List<ProjectItemViewModel>> GetAll(string search = "", int page = 0, int size = 10)
+    public ResultViewModel<List<ProjectItemViewModel>> GetAll(string search, int page, int size)
     {
         var projects = _context.Projects
             .Include(p => p.Client)
@@ -57,9 +57,9 @@ public class ProjectService : IProjectService
         return ResultViewModel<int>.Success(project.Id);
     }
 
-    public ResultViewModel Update(UpdateProjectDTO model)
+    public ResultViewModel Update(int id, UpdateProjectDTO model)
     {
-        var project = _context.Projects.SingleOrDefault(p => p.Id == model.IdProject);
+        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
 
         if (project is null)
         {

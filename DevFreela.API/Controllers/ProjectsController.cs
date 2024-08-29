@@ -1,79 +1,56 @@
 using DevFreela.API.DTOs;
-using DevFreela.Domain.Entities;
+using DevFreela.Application.Services;
 using DevFreela.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace DevFreela.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 public class ProjectsController : ControllerBase
 {    
-    private readonly DevFreelaDbContext _context;
-    public ProjectsController(DevFreelaDbContext context)
+    private readonly IProjectService _service;
+    public ProjectsController(DevFreelaDbContext context, IProjectService service)
     {
-        _context = context;
+        _service = service;
     }
     [HttpGet]
     public IActionResult Get(string search = "", int page = 0, int size = 10)
     {
-        var projects = _context.Projects
-            .Include(p => p.Client)
-            .Include(p => p.Freelancer)
-            .Where(p => !p.IsDeleted && (search == "" || p.Title.Contains(search) || p.Description.Contains(search)))
-            .Skip(page * size)
-            .Take(size)
-            .ToList();
-
-        var model = projects.Select(ProjectItemViewModel.FromEntity).ToList();
+        var result = _service.GetAll(search, page, size);
         
-        return Ok(model);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
-        var project = _context.Projects
-            .Include(p => p.Client)
-            .Include(p => p.Freelancer)
-            .Include(p => p.Comments)
-            .Where(p => !p.IsDeleted)
-            .SingleOrDefault(p => p.Id == id);
+        var result = _service.GetById(id);
 
-        if (project is null)
+        if (!result.IsSuccess)
         {
-            return NotFound();
+            return BadRequest(result.Message);
         }
-
-        var model = ProjectViewModel.FromEntity(project);
         
-        return Ok(model);
+        return Ok(result);
     }
 
     [HttpPost]
     public IActionResult Post(CreateProjectDTO model)
     {
-        var project = model.ToEntity();
-        _context.Projects.Add(project);
-        _context.SaveChanges();
+        var result = _service.Insert(model);
         
-        return CreatedAtAction(nameof(GetById), new { id = 1 }, model);
+        return CreatedAtAction(nameof(GetById), new { id = result.Data }, model);
     }
 
     [HttpPut("{id}")]
     public IActionResult Put(int id, UpdateProjectDTO model)
     {
-        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+        var result = _service.Update(id, model);
 
-        if (project is null)
+        if (!result.IsSuccess)
         {
-            return NotFound();
+            return BadRequest(result.Message);
         }
-            
-        project.Update(model.Title, model.Description, model.TotalCost);
-        _context.Projects.Update(project);
-        _context.SaveChanges();
         
         return NoContent();
     }
@@ -81,16 +58,12 @@ public class ProjectsController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+        var result = _service.Delete(id);
 
-        if (project is null)
+        if (!result.IsSuccess)
         {
-            return NotFound();
+            return BadRequest(result.Message);
         }
-        
-        project.SetAsDeleted();
-        _context.Projects.Update(project);
-        _context.SaveChanges();
         
         return NoContent();
     }
@@ -98,16 +71,12 @@ public class ProjectsController : ControllerBase
     [HttpPut("{id}/start")]
     public IActionResult Start(int id)
     {
-        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+        var result = _service.Start(id);
 
-        if (project is null)
+        if (!result.IsSuccess)
         {
-            return NotFound();
+            return BadRequest(result.Message);
         }
-        
-        project.Start();
-        _context.Projects.Update(project);
-        _context.SaveChanges();
         
         return NoContent();
     }
@@ -115,16 +84,12 @@ public class ProjectsController : ControllerBase
     [HttpPut("{id}/complete")]
     public IActionResult Complete(int id)
     {
-        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+        var result = _service.Complete(id);
 
-        if (project is null)
+        if (!result.IsSuccess)
         {
-            return NotFound();
+            return BadRequest(result.Message);
         }
-        
-        project.Complete();
-        _context.Projects.Update(project);
-        _context.SaveChanges();
         
         return NoContent();
     }
@@ -132,17 +97,13 @@ public class ProjectsController : ControllerBase
     [HttpPost("{id}/comments")]
     public IActionResult Post(int id, CreateProjectCommentDTO model)
     {
-        var project = _context.Projects.SingleOrDefault(p => p.Id == id);
+        var result = _service.InsertComment(id, model);
 
-        if (project is null)
+        if (!result.IsSuccess)
         {
-            return NotFound();
+            return BadRequest(result.Message);
         }
-
-        var comment = new ProjectComment(model.Content, model.IdProject, model.IdUser);
-        _context.ProjectComments.Add(comment);
-        _context.SaveChanges();
         
-        return Ok();
+        return NoContent();
     }
 }
