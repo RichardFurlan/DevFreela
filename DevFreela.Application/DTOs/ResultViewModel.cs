@@ -21,5 +21,5 @@ public record ResultViewModel<T> : ResultViewModel
         => new (data);
 
     public static ResultViewModel<T> Error(string message)
-        => new(default, false, message);
+        => new (default, false, message);
 };
