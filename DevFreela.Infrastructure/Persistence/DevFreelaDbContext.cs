@@ -44,6 +44,11 @@ public class DevFreelaDbContext : DbContext
                     .WithMany(p => p.Comments)
                     .HasForeignKey(p => p.IdProject)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(p => p.User)
+                    .WithMany(u => u.Comments)
+                    .HasForeignKey(p => p.IdUser)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         
         builder
