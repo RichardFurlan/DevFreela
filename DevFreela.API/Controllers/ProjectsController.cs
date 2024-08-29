@@ -1,6 +1,7 @@
 using DevFreela.API.DTOs;
 using DevFreela.Application.Commands.CompleteProject;
 using DevFreela.Application.Commands.DeleteProject;
+using DevFreela.Application.Commands.InsertComment;
 using DevFreela.Application.Commands.InsertProject;
 using DevFreela.Application.Commands.StartProject;
 using DevFreela.Application.Commands.UpdateProject;
@@ -107,7 +108,7 @@ public class ProjectsController : ControllerBase
     }
 
     [HttpPost("{id}/comments")]
-    public async Task<IActionResult> PostComment(int id, InsertProjectCommand command)
+    public async Task<IActionResult> PostComment(int id, InsertCommentCommand command)
     {
         var result = await _mediator.Send(command);
 
