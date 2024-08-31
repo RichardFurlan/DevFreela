@@ -1,11 +1,10 @@
 using DevFreela.Application.DTOs;
-using DevFreela.Domain.Entities;
 using MediatR;
 
-namespace DevFreela.Application.Commands.InsertProject;
+namespace DevFreela.Application.Commands.Project.InsertProject;
 
 public record InsertProjectCommand(string Title, string Description, int IdCliente, int IdFreelancer, decimal TotalCost) : IRequest<ResultViewModel<int>>
 {
-    public Project ToEntity()
+    public Domain.Entities.Project ToEntity()
         => new(Title, Description, IdCliente, IdFreelancer, TotalCost);
 };

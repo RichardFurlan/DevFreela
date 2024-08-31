@@ -1,11 +1,9 @@
 using DevFreela.Application.DTOs;
 using DevFreela.Domain.Entities;
 using DevFreela.Domain.Respositories;
-using DevFreela.Infrastructure.Persistence;
 using MediatR;
 
-
-namespace DevFreela.Application.Commands.InsertComment;
+namespace DevFreela.Application.Commands.Project.InsertComment;
 
 public class InsertCommentHandler : IRequestHandler<InsertCommentCommand, ResultViewModel>
 {

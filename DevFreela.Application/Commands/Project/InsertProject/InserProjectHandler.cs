@@ -1,10 +1,9 @@
 using DevFreela.Application.DTOs;
 using DevFreela.Application.Notification.ProjectCreated;
 using DevFreela.Domain.Respositories;
-using DevFreela.Infrastructure.Persistence;
 using MediatR;
 
-namespace DevFreela.Application.Commands.InsertProject;
+namespace DevFreela.Application.Commands.Project.InsertProject;
 
 public class InserProjectHandler : IRequestHandler<InsertProjectCommand, ResultViewModel<int>>
 {

@@ -1,10 +1,8 @@
 using DevFreela.Application.DTOs;
 using DevFreela.Domain.Respositories;
-using DevFreela.Infrastructure.Persistence;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
-namespace DevFreela.Application.Commands.UpdateProject;
+namespace DevFreela.Application.Commands.Project.UpdateProject;
 
 public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, ResultViewModel>
 {

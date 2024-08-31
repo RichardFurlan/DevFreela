@@ -2,17 +2,16 @@ using DevFreela.Application.DTOs;
 using DevFreela.Domain.Respositories;
 using MediatR;
 
-namespace DevFreela.Application.Commands.DeleteProject;
+namespace DevFreela.Application.Commands.Project.CompleteProject;
 
-public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand, ResultViewModel>
+public class CompleteProjectHandler : IRequestHandler<CompleteProjectCommand, ResultViewModel>
 {
     private readonly IProjectRepository _projectRepository;
-    public DeleteProjectHandler(IProjectRepository projectRepository)
+    public CompleteProjectHandler(IProjectRepository projectRepository)
     {
         _projectRepository = projectRepository;
     }
-
-    public async Task<ResultViewModel> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
+    public async Task<ResultViewModel> Handle(CompleteProjectCommand request, CancellationToken cancellationToken)
     {
         var project = await _projectRepository.GetById(request.Id);
 
@@ -21,7 +20,7 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand, Result
             return ResultViewModel.Error("Projeto não encontrado");
         }
         
-        project.SetAsDeleted();
+        project.Complete();
 
         await _projectRepository.Update(project);
 
