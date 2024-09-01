@@ -4,13 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DevFreela.Infrastructure.Persistence.Repositories;
 
-public class ProjectRepository : IProjectRepository
+public class ProjectRepository : GenericRepository<Project>, IProjectRepository
 {
-    private readonly DevFreelaDbContext _context;
-
-    public ProjectRepository(DevFreelaDbContext context)
+    public ProjectRepository(DevFreelaDbContext context) : base(context)
     {
-        _context = context;
     }
     public async Task<List<Project>> GetAll(string search, int page, int size)
     {
@@ -33,33 +30,9 @@ public class ProjectRepository : IProjectRepository
             .SingleOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task<Project?> GetById(int id)
-    {
-        return await _context.Projects.SingleOrDefaultAsync(p => p.Id == id);
-    }
-
-    public async Task<int> Add(Project project)
-    {
-        await _context.Projects.AddAsync(project);
-        await _context.SaveChangesAsync();
-
-        return project.Id;
-    }
-
-    public async Task Update(Project project)
-    {
-        _context.Projects.Update(project);
-        await _context.SaveChangesAsync();
-    }
-
     public async Task AddComment(ProjectComment comment)
     {
         await _context.ProjectComments.AddAsync(comment);
         await _context.SaveChangesAsync();
-    }
-
-    public async Task<bool> Exists(int id)
-    {
-        return await _context.Projects.AnyAsync(p => p.Id == id);
     }
 }

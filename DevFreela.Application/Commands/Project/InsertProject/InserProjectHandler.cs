@@ -1,10 +1,9 @@
 using DevFreela.Application.DTOs;
 using DevFreela.Application.Notification.ProjectCreated;
 using DevFreela.Domain.Respositories;
-using DevFreela.Infrastructure.Persistence;
 using MediatR;
 
-namespace DevFreela.Application.Commands.InsertProject;
+namespace DevFreela.Application.Commands.Project.InsertProject;
 
 public class InserProjectHandler : IRequestHandler<InsertProjectCommand, ResultViewModel<int>>
 {
@@ -21,7 +20,7 @@ public class InserProjectHandler : IRequestHandler<InsertProjectCommand, ResultV
     {
         var project = request.ToEntity();
 
-        await _projectRepository.Add(project);
+        await _projectRepository.AddAsync(project);
 
         var projectCreated = new ProjectCreatedNotification(project.Id, project.Title, project.TotalCost);
         await _mediator.Publish(projectCreated);

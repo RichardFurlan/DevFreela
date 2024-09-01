@@ -13,7 +13,7 @@ public class ValidateInsertProjectCommandBehavior : IPipelineBehavior<InsertProj
     }
     public async Task<ResultViewModel<int>> Handle(InsertProjectCommand request, RequestHandlerDelegate<ResultViewModel<int>> next, CancellationToken cancellationToken)
     {
-        var clientExists = _context.Users.Any(u => u.Id == request.IdCliente);
+        var clientExists = _context.Users.Any(u => u.Id == request.IdClient);
         var freelancerExists = _context.Users.Any(u => u.Id == request.IdFreelancer);
 
         if (!clientExists || !freelancerExists)

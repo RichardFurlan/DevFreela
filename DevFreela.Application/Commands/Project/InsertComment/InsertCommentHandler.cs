@@ -1,11 +1,9 @@
 using DevFreela.Application.DTOs;
 using DevFreela.Domain.Entities;
 using DevFreela.Domain.Respositories;
-using DevFreela.Infrastructure.Persistence;
 using MediatR;
 
-
-namespace DevFreela.Application.Commands.InsertComment;
+namespace DevFreela.Application.Commands.Project.InsertComment;
 
 public class InsertCommentHandler : IRequestHandler<InsertCommentCommand, ResultViewModel>
 {
@@ -17,7 +15,7 @@ public class InsertCommentHandler : IRequestHandler<InsertCommentCommand, Result
 
     public async Task<ResultViewModel> Handle(InsertCommentCommand request, CancellationToken cancellationToken)
     {
-        var projectExists = await _projectRepository.Exists(request.IdProject);
+        var projectExists = await _projectRepository.ExistsAsync(request.IdProject);
 
         if (projectExists)
         {

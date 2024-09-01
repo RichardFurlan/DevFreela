@@ -2,7 +2,7 @@ using DevFreela.Application.DTOs;
 using DevFreela.Domain.Respositories;
 using MediatR;
 
-namespace DevFreela.Application.Commands.DeleteProject;
+namespace DevFreela.Application.Commands.Project.DeleteProject;
 
 public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand, ResultViewModel>
 {
@@ -14,7 +14,7 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand, Result
 
     public async Task<ResultViewModel> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
     {
-        var project = await _projectRepository.GetById(request.Id);
+        var project = await _projectRepository.GetByIdAsync(request.Id);
 
         if (project is null)
         {
@@ -23,7 +23,7 @@ public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand, Result
         
         project.SetAsDeleted();
 
-        await _projectRepository.Update(project);
+        await _projectRepository.UpdateAsync(project);
 
         return ResultViewModel.Success();
     }
