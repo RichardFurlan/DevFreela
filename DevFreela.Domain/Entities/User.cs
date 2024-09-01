@@ -13,6 +13,7 @@ public class User : BaseEntity
         OwnedProjects = [];
         FreelancerProjects = [];
         Comments = [];
+        ProfilePictureUrl = "";
     }
 
     public string FullName { get; private set; }
@@ -23,4 +24,10 @@ public class User : BaseEntity
     public List<Project> OwnedProjects { get; private set; }
     public List<Project> FreelancerProjects { get; private set; }
     public List<ProjectComment> Comments { get; private set; }
+    public string ProfilePictureUrl { get; private set; }
+    
+    public void UpdateProfilePicture(string profilePictureUrl)
+    {
+        ProfilePictureUrl = profilePictureUrl;
+    }
 }

@@ -1,6 +1,6 @@
 using DevFreela.Domain.Entities;
 
-namespace DevFreela.API.DTOs;
+namespace DevFreela.Application.DTOs;
 
 public record UserViewModel(string FullName, string Email, DateTime BirthDate, List<string> Skills)
 {

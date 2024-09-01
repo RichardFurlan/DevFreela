@@ -1,6 +1,11 @@
 using DevFreela.API.DTOs;
+using DevFreela.Application.Commands.User.InsertProfilePicture;
+using DevFreela.Application.Commands.User.InsertUser;
+using DevFreela.Application.Commands.User.InsertUserSkill;
+using DevFreela.Application.Queries.User.GetUserById;
 using DevFreela.Domain.Entities;
 using DevFreela.Infrastructure.Persistence;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,60 +14,62 @@ namespace DevFreela.API.Controllers;
 [ApiController]
 public class UsersController : ControllerBase
 {
-    private readonly DevFreelaDbContext _context;
-    public UsersController(DevFreelaDbContext context)
+    private readonly IMediator _mediator;
+    public UsersController(IMediator mediator)
     {
-        _context = context;
+        _mediator = mediator;
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var user = _context.Users
-            .Include(u => u.Skills)
-                .ThenInclude(u => u.Skill)
-            .SingleOrDefault(u => u.Id == id);
+        var result = await _mediator.Send(new GetUserByIdQuery(id));
 
-        if (user is null)
+        if (!result.IsSuccess)
         {
-            return NotFound();
+            return BadRequest(result.Message);
         }
-
-        var model = UserViewModel.FromEntity(user);
         
-        return Ok(model);
+        return Ok(result);
     }
     
     
     [HttpPost]
-    public IActionResult Post(CreateUserDTO model)
+    public async Task<IActionResult> Post(InsertUserCommand command)
     {
-        var user = new User(model.FullName, model.Email, model.BirthDate.ToUniversalTime());
-
-        _context.Users.Add(user);
-        _context.SaveChanges();
+        var result = await _mediator.Send(command);
         
-        return NoContent();
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Message);
+        }
+        
+        return CreatedAtAction(nameof(GetById), new { id = result.Data }, command);
     }
 
     [HttpPost("{id}/skill")]
-    public IActionResult PostSkill(int id, UserSkillDTO model)
+    public async Task<IActionResult> PostSkill(InsertUserSkillCommand command)
     {
-        var userSkill = model.SkillIds.Select(s => new UserSkill(id, s)).ToList();
+        var result = await _mediator.Send(command);
         
-        _context.UserSkills.AddRange();
-        _context.SaveChanges();
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Message);
+        }
         
         return NoContent();
     }
 
     [HttpPost("{id}/profile-picture")]
-    public IActionResult PostProfilePicture(int id, IFormFile file)
+    public async Task<IActionResult> PostProfilePicture(int id, IFormFile file, [FromServices] InsertProfilePictureCommand command)
     {
-        var description = $"File: {file.FileName}, Size: {file.Length}";
+        var result = await _mediator.Send(command);
         
-        // Processar imagem
-
-        return Ok(description);
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Message);
+        }
+        
+        return NoContent();
     }
 }
