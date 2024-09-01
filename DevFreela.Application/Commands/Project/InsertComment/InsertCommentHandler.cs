@@ -15,7 +15,7 @@ public class InsertCommentHandler : IRequestHandler<InsertCommentCommand, Result
 
     public async Task<ResultViewModel> Handle(InsertCommentCommand request, CancellationToken cancellationToken)
     {
-        var projectExists = await _projectRepository.Exists(request.IdProject);
+        var projectExists = await _projectRepository.ExistsAsync(request.IdProject);
 
         if (projectExists)
         {

@@ -20,7 +20,7 @@ public class InserProjectHandler : IRequestHandler<InsertProjectCommand, ResultV
     {
         var project = request.ToEntity();
 
-        await _projectRepository.Add(project);
+        await _projectRepository.AddAsync(project);
 
         var projectCreated = new ProjectCreatedNotification(project.Id, project.Title, project.TotalCost);
         await _mediator.Publish(projectCreated);

@@ -30,7 +30,7 @@ public static class InfrastructureModule
     private static IServiceCollection AddRepository(this IServiceCollection services)
     {
         services.AddScoped<IProjectRepository, ProjectRepository>();
-
+        services.AddScoped<ISkillRepository, SkillRepository>();
         return services;
     }
 }

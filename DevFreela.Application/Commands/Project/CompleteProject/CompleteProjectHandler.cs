@@ -13,7 +13,7 @@ public class CompleteProjectHandler : IRequestHandler<CompleteProjectCommand, Re
     }
     public async Task<ResultViewModel> Handle(CompleteProjectCommand request, CancellationToken cancellationToken)
     {
-        var project = await _projectRepository.GetById(request.Id);
+        var project = await _projectRepository.GetByIdAsync(request.Id);
 
         if (project is null)
         {
@@ -22,7 +22,7 @@ public class CompleteProjectHandler : IRequestHandler<CompleteProjectCommand, Re
         
         project.Complete();
 
-        await _projectRepository.Update(project);
+        await _projectRepository.UpdateAsync(project);
 
         return ResultViewModel.Success();
     }

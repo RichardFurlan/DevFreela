@@ -1,11 +1,9 @@
 using DevFreela.API.DTOs;
 using DevFreela.Application.DTOs;
 using DevFreela.Domain.Respositories;
-using DevFreela.Infrastructure.Persistence;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
-namespace DevFreela.Application.Queries.GetProjectById;
+namespace DevFreela.Application.Queries.Project.GetProjectById;
 
 public class GetProjectByIdHandler : IRequestHandler<GetProjectByIdQuery, ResultViewModel<ProjectViewModel>>
 {

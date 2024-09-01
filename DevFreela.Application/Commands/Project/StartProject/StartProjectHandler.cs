@@ -14,7 +14,7 @@ public class StartProjectHandler : IRequestHandler<StartProjectCommand, ResultVi
 
     public async Task<ResultViewModel> Handle(StartProjectCommand request, CancellationToken cancellationToken)
     {
-        var project = await _projectRepository.GetById(request.Id);
+        var project = await _projectRepository.GetByIdAsync(request.Id);
 
         if (project is null)
         {
@@ -23,7 +23,7 @@ public class StartProjectHandler : IRequestHandler<StartProjectCommand, ResultVi
         
         project.Start();
         
-        await _projectRepository.Update(project);
+        await _projectRepository.UpdateAsync(project);
 
         return ResultViewModel.Success();
     }
