@@ -47,7 +47,7 @@ public class UsersController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Data }, command);
     }
 
-    [HttpPost("{id}/skill")]
+    [HttpPost("/skill")]
     public async Task<IActionResult> PostSkill(InsertUserSkillCommand command)
     {
         var result = await _mediator.Send(command);
@@ -64,7 +64,6 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> PostProfilePicture(int id, IFormFile file, [FromServices] InsertProfilePictureCommand command)
     {
         var result = await _mediator.Send(command);
-        
         if (!result.IsSuccess)
         {
             return BadRequest(result.Message);
