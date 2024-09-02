@@ -1,9 +1,8 @@
 # DevFreela
 
-DevFreela é uma aplicação de gerenciamento de projetos que utiliza Arquitetura Limpa, CQRS e Entity Framework. Gerencie projetos, habilidades e usuários de forma eficaz com uma API moderna e bem estruturada.
+DevFreela é uma aplicação de gerenciamento de projetos desenvolvida com o objetivo de aplicar e consolidar conceitos de Arquitetura Limpa, CQRS, e Entity Framework. Esta aplicação serve como um estudo de caso para quem deseja aprender a construir APIs modernas e bem estruturadas usando as tecnologias mais recentes do ecossistema .NET.
 
 ![Screenshot do Projeto](https://raw.githubusercontent.com/RichardFurlan/DevFreela/master/screenshot-projeto.png)
-
 
 ## 🚀 Funcionalidades
 
