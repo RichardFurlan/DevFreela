@@ -1,9 +1,10 @@
 using DevFreela.API.DTOs;
+using DevFreela.Application.Commands.User.InsertUser;
 using FluentValidation;
 
 namespace DevFreela.Application.Validators;
 
-public class CreateUserValidator : AbstractValidator<CreateUserDTO>
+public class CreateUserValidator : AbstractValidator<InsertUserCommand>
 {
     public CreateUserValidator()
     {
