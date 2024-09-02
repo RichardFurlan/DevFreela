@@ -17,7 +17,7 @@ public class InsertCommentHandler : IRequestHandler<InsertCommentCommand, Result
     {
         var projectExists = await _projectRepository.ExistsAsync(request.IdProject);
 
-        if (projectExists)
+        if (!projectExists)
         {
             return ResultViewModel.Error("Projeto não encontrado");
         }

@@ -16,7 +16,7 @@ public class InsertUserSkillHandler : IRequestHandler<InsertUserSkillCommand, Re
     {
         var userExists = await _userRepository.ExistsAsync(request.IdUser);
 
-        if (userExists)
+        if (!userExists)
         {
             return ResultViewModel.Error("Usuário não encontrado");
         }
