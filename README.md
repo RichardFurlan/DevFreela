@@ -45,3 +45,30 @@ DevFreela é uma aplicação de gerenciamento de projetos que utiliza Arquitetur
 1. **Clone o repositório**:
    ```bash
    git clone https://github.com/seu-repositorio/devfreela.git
+   ```
+2. **Navegue até o diretório do projeto:**:
+   ```bash
+   cd devfreela
+   ```
+3. **Clone o repositório**:
+   ```bash
+   dotnet restore
+   ```
+4. **Navegue até o diretório do projeto:**:
+   ```bash
+   dotnet ef database update
+   ```
+5. **Clone o repositório**:
+   ```bash
+   dotnet run
+   ```
+
+## 💬 Contribuições
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. **Faça um fork do repositório.**
+2. **Crie uma branch para sua feature (git checkout -b minha-feature).**
+3. **Faça commit das suas alterações (git commit -am 'Adiciona nova feature').**
+4. **Faça push para a branch (git push origin minha-feature).**
+5. **Crie uma Pull Request.**
