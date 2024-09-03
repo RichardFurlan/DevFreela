@@ -1,4 +1,5 @@
 using DevFreela.Domain.Respositories;
+using DevFreela.Infrastructure.CacheStorage;
 using DevFreela.Infrastructure.Persistence;
 using DevFreela.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ public static class InfrastructureModule
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services
+            .AddRedisCache()
             .AddRepository()
             .AddData(configuration);
         
@@ -33,6 +35,19 @@ public static class InfrastructureModule
         services.AddScoped<ISkillRepository, SkillRepository>();        
         services.AddScoped<IUserRepository, UserRepository>();
 
+        return services;
+    }
+
+    private static IServiceCollection AddRedisCache(this IServiceCollection services)
+    {
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.InstanceName = "DevFreelaCache";
+            options.Configuration = "localhost:6379";
+        });
+
+        services.AddTransient<ICacheService, CacheService>();
+        
         return services;
     }
 }
