@@ -2,6 +2,7 @@ using DevFreela.Domain.Respositories;
 using DevFreela.Infrastructure.CacheStorage;
 using DevFreela.Infrastructure.Persistence;
 using DevFreela.Infrastructure.Persistence.Repositories;
+using DevFreela.Infrastructure.Services.AuthService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ public static class InfrastructureModule
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services
+            .AddAuth()
             .AddRedisCache()
             .AddRepository()
             .AddData(configuration);
@@ -47,6 +49,13 @@ public static class InfrastructureModule
         });
 
         services.AddTransient<ICacheService, CacheService>();
+        
+        return services;
+    }
+
+    private static IServiceCollection AddAuth(this IServiceCollection services)
+    {
+        services.AddScoped<IAuthService, AuthService>();
         
         return services;
     }

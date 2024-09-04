@@ -155,6 +155,10 @@ namespace DevFreela.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("ProfilePictureUrl")
                         .IsRequired()
                         .HasColumnType("text");
