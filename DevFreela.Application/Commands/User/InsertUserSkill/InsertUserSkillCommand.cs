@@ -3,4 +3,4 @@ using MediatR;
 
 namespace DevFreela.Application.Commands.User.InsertUserSkill;
 
-public record InsertUserSkillCommand(int[] SkillIds, int IdUser) : IRequest<ResultViewModel>;
+public record InsertUserSkillCommand(int IdUser, int[] SkillIds) : IRequest<ResultViewModel>;
