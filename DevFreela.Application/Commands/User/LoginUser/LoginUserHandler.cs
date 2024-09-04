@@ -22,7 +22,7 @@ public class LoginUserHandler : IRequestHandler<LoginUserCommand, ResultViewMode
         
         if (user is null)
         {
-            return ResultViewModel<LoginUserViewModel>.Error("E-mail ou senha incorreto, tente novamente.");
+            return ResultViewModel<LoginUserViewModel>.Error("E-mail ou senha incorretos, tente novamente.");
         }
         
         var token = _authService.GenerateJwtToken(user.Email);
