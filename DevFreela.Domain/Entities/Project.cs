@@ -40,22 +40,28 @@ public class Project : BaseEntity
         }
     }
 
-    public void Start()
+    public bool Start()
     {
         if (Status == EnumProjectStatus.Created)
         {
             Status = EnumProjectStatus.InProgress;
             StartedAt = DateTime.Now;
+            return true;
         }
+
+        return false;
     }
 
-    public void Complete()
+    public bool Complete()
     {
         if (Status == EnumProjectStatus.PaymentPending || Status == EnumProjectStatus.InProgress)
         {
             Status = EnumProjectStatus.Completed;
             CompletedAt = DateTime.Now;
+            return true;
         }
+
+        return false;
     }
 
     public void SetPaymentPending()
