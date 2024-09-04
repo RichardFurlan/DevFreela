@@ -20,7 +20,11 @@ public class CompleteProjectHandler : IRequestHandler<CompleteProjectCommand, Re
             return ResultViewModel.Error("Projeto não encontrado");
         }
         
-        project.Complete();
+        var complete = project.Complete();
+        if (!complete)
+        {
+            return ResultViewModel.Error("O projeto não pode ser completado. Apenas projetos com a situação andamento e com pagamento pendente podem ser completados");
+        }
 
         await _projectRepository.UpdateAsync(project);
 

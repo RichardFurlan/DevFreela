@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevFreela.Infrastructure", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevFreela.Domain", "DevFreela.Domain\DevFreela.Domain.csproj", "{C33828B5-61CF-4666-AEB5-3586F3C2A9A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevFreela.Test", "DevFreela.Test\DevFreela.Test.csproj", "{CFC7EF54-15E4-40B0-94DB-AA9BCAC7A84B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,5 +37,9 @@ Global
 		{C33828B5-61CF-4666-AEB5-3586F3C2A9A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C33828B5-61CF-4666-AEB5-3586F3C2A9A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C33828B5-61CF-4666-AEB5-3586F3C2A9A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFC7EF54-15E4-40B0-94DB-AA9BCAC7A84B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFC7EF54-15E4-40B0-94DB-AA9BCAC7A84B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFC7EF54-15E4-40B0-94DB-AA9BCAC7A84B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFC7EF54-15E4-40B0-94DB-AA9BCAC7A84B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
