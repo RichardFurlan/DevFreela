@@ -1,14 +1,10 @@
-using DevFreela.API.DTOs;
 using DevFreela.Application.Commands.User.InsertProfilePicture;
 using DevFreela.Application.Commands.User.InsertUser;
 using DevFreela.Application.Commands.User.InsertUserSkill;
 using DevFreela.Application.Commands.User.LoginUser;
 using DevFreela.Application.Queries.User.GetUserById;
-using DevFreela.Domain.Entities;
-using DevFreela.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DevFreela.API.Controllers;
 [Route("api/[controller]")]
@@ -64,7 +60,9 @@ public class UsersController : ControllerBase
     [HttpPost("{id}/skill")]
     public async Task<IActionResult> PostSkill(int id, [FromBody] InsertUserSkillCommand command)
     {
-        var result = await _mediator.Send(command);
+        var commandWithUserId = command.IdUser == 0 ? command with { IdUser = id } : command;
+
+        var result = await _mediator.Send(commandWithUserId);
         
         if (!result.IsSuccess)
         {
@@ -75,8 +73,10 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("{id}/profile-picture")]
-    public async Task<IActionResult> PostProfilePicture(int id, IFormFile file, [FromServices] InsertProfilePictureCommand command)
+    public async Task<IActionResult> PostProfilePicture(int id, IFormFile file)
     {
+        var command = new InsertProfilePictureCommand(id, file);
+        
         var result = await _mediator.Send(command);
         if (!result.IsSuccess)
         {
