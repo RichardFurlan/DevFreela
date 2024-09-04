@@ -2,6 +2,7 @@ using DevFreela.API.DTOs;
 using DevFreela.Application.Commands.User.InsertProfilePicture;
 using DevFreela.Application.Commands.User.InsertUser;
 using DevFreela.Application.Commands.User.InsertUserSkill;
+using DevFreela.Application.Commands.User.LoginUser;
 using DevFreela.Application.Queries.User.GetUserById;
 using DevFreela.Domain.Entities;
 using DevFreela.Infrastructure.Persistence;
@@ -34,7 +35,7 @@ public class UsersController : ControllerBase
     }
     
     
-    [HttpPost]
+    [HttpPost("register")]
     public async Task<IActionResult> Post(InsertUserCommand command)
     {
         var result = await _mediator.Send(command);
@@ -46,9 +47,22 @@ public class UsersController : ControllerBase
         
         return CreatedAtAction(nameof(GetById), new { id = result.Data }, command);
     }
+    
+    [HttpPost("login")]
+    public async Task<IActionResult> Post(LoginUserCommand command)
+    {
+        var result = await _mediator.Send(command);
+        
+        if (!result.IsSuccess)
+        {
+            return BadRequest(result.Message);
+        }
+        
+        return Ok(result);
+    }
 
-    [HttpPost("/skill")]
-    public async Task<IActionResult> PostSkill(InsertUserSkillCommand command)
+    [HttpPost("{id}/skill")]
+    public async Task<IActionResult> PostSkill(int id, [FromBody] InsertUserSkillCommand command)
     {
         var result = await _mediator.Send(command);
         
