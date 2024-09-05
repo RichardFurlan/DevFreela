@@ -1,4 +1,5 @@
 using DevFreela.Application.DTOs;
+using DevFreela.Domain.Respositories;
 using DevFreela.Infrastructure.Persistence;
 using MediatR;
 
@@ -6,15 +7,15 @@ namespace DevFreela.Application.Commands.Project.InsertProject;
 
 public class ValidateInsertProjectCommandBehavior : IPipelineBehavior<InsertProjectCommand, ResultViewModel<int>>
 {
-    private readonly DevFreelaDbContext _context;
-    public ValidateInsertProjectCommandBehavior(DevFreelaDbContext context)
+    private readonly IUserRepository _userRepository;
+    public ValidateInsertProjectCommandBehavior(IUserRepository userRepository)
     {
-        _context = context;
+        _userRepository = userRepository;
     }
     public async Task<ResultViewModel<int>> Handle(InsertProjectCommand request, RequestHandlerDelegate<ResultViewModel<int>> next, CancellationToken cancellationToken)
     {
-        var clientExists = _context.Users.Any(u => u.Id == request.IdClient);
-        var freelancerExists = _context.Users.Any(u => u.Id == request.IdFreelancer);
+        var clientExists = await _userRepository.ExistsAsync(request.IdClient);
+        var freelancerExists = await _userRepository.ExistsAsync(request.IdFreelancer);
 
         if (!clientExists || !freelancerExists)
         {
