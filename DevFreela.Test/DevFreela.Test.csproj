@@ -28,4 +28,8 @@
       <ProjectReference Include="..\DevFreela.Infrastructure\DevFreela.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Application\Commands\Project\InsertComment\" />
+    </ItemGroup>
+
 </Project>
