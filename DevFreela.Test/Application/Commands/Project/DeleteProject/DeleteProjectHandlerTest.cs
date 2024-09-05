@@ -6,7 +6,7 @@ using Moq;
 
 namespace DevFreela.Test.Application.Commands.Project.DeleteProject;
 
-public class DeleteProjectHandlerTests
+public class DeleteProjectHandlerTest
 {
     [Fact]
     public async Task Handle_ProjectExists_ReturnsSuccess()
