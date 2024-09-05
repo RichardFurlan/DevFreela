@@ -6,7 +6,7 @@ using Moq;
 
 namespace DevFreela.Test.Application.Commands.Project.CompleteProject;
 
-public class CompleteProjectHandlerTests
+public class CompleteProjectHandlerTest
 {
     [Fact]
     public async Task Handle_ProjectExistsAndIsInProgress_ReturnsSuccess()
