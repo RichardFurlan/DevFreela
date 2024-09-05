@@ -21,7 +21,11 @@ public class StartProjectHandler : IRequestHandler<StartProjectCommand, ResultVi
             return ResultViewModel.Error("Projeto não encontrado");
         }
         
-        project.Start();
+        var started = project.Start();
+        if (!started)
+        {
+            return ResultViewModel.Error("O projeto não pode ser iniciado. Apenas projetos com a situação criado");
+        }
         
         await _projectRepository.UpdateAsync(project);
 
