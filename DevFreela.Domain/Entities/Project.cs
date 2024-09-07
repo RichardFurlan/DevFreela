@@ -78,4 +78,10 @@ public class Project : BaseEntity
         Description = description;
         TotalCost = totalCost;
     }
+    
+    public void AssignUsers(User client, User freelancer)
+    {
+        Client = client;
+        Freelancer = freelancer;
+    }
 }
