@@ -28,4 +28,9 @@
       <ProjectReference Include="..\DevFreela.Infrastructure\DevFreela.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Application\Queries\Skill\" />
+      <Folder Include="Application\Queries\User\" />
+    </ItemGroup>
+
 </Project>
