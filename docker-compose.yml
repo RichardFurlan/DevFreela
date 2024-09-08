@@ -10,9 +10,11 @@
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DevFreelaDb=Host=localhost;Port=5432;Database=devfreela;Username=devfreela_user;Password=123456
       - Redis__Configuration=redis:6379
+      - RabbitMQ__Connection=amqp://guest:guest@rabbitmq:5672
     depends_on:
       - db-devfreela
       - redis
+      - rabbit-mq
 
   db-devfreela:
     image: postgres:latest
@@ -29,6 +31,15 @@
     image: redis:latest
     ports:
       - "6379:6379"
+  
+  rabbit-mq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
 
   pgadmin-devfreela:
     image: dpage/pgadmin4
