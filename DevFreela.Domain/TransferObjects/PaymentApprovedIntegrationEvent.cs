@@ -1,3 +1,3 @@
-namespace DevFreela.Domain.IntegrationEvents;
+namespace DevFreela.Domain.TransferObjects;
 
 public record PaymentApprovedIntegrationEvent(int IdProject);

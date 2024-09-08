@@ -1,8 +1,8 @@
-using DevFreela.Domain.DTOs;
+using DevFreela.Domain.TransferObjects;
 
 namespace DevFreela.Infrastructure.Services.PaymentService;
 
 public interface IPaymentService
 {
-    void ProcessPayment(PaymentInfoDTO paymentInfoDto);
+    Task ProcessPaymentAsync(PaymentInfoDTO paymentInfoDto);
 }

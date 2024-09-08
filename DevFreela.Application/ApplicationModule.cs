@@ -1,7 +1,5 @@
 using DevFreela.Application.Commands.Project.InsertProject;
-using DevFreela.Application.Consumers;
 using DevFreela.Application.DTOs;
-using DevFreela.Application.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -15,8 +13,7 @@ public static class ApplicationModule
     {
         services
             .AddHandlers()
-            .AddValidation()
-            .AddConsumer();
+            .AddValidation();
         return services;
     }
 
@@ -34,13 +31,6 @@ public static class ApplicationModule
         services
             .AddFluentValidationAutoValidation()
             .AddValidatorsFromAssemblyContaining<InsertProjectCommand>();
-
-        return services;
-    }
-
-    private static IServiceCollection AddConsumer(this IServiceCollection services)
-    {
-        services.AddHostedService<PaymentApprovedConsumer>();
 
         return services;
     }

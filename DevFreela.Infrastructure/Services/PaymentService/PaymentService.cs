@@ -1,23 +1,34 @@
 using System.Text;
 using System.Text.Json;
-using DevFreela.Domain.DTOs;
+using DevFreela.Domain.TransferObjects;
 using DevFreela.Infrastructure.Services.MessageBus;
+using Microsoft.Extensions.Hosting;
+
 
 namespace DevFreela.Infrastructure.Services.PaymentService;
 
-public class PaymentService : IPaymentService
+public class PaymentService : BackgroundService, IPaymentService
 {
-    private readonly IMessageBusService _messageBusService;
+    private readonly IMessagePublisher _messagePublisher;
+    private readonly IMessageConsumer _messageConsumer;
     private const string QUEUE_NAME = "Payments";
-    public PaymentService(IMessageBusService messageBusService)
+    private const string APPROVED_QUEUE = "Payments-Approved";
+    public PaymentService(IMessagePublisher  messagePublisher, IMessageConsumer messageConsumer)
     {
-        _messageBusService = messageBusService;
+        _messagePublisher = messagePublisher;
+        _messageConsumer = messageConsumer;
     }
-    public void ProcessPayment(PaymentInfoDTO paymentInfoDto)
+    public async Task ProcessPaymentAsync(PaymentInfoDTO paymentInfoDto)
     {
         var paymentInfoJson = JsonSerializer.Serialize(paymentInfoDto);
 
         var paymentInfoBytes = Encoding.UTF8.GetBytes(paymentInfoJson);
-        _messageBusService.Publish(QUEUE_NAME, paymentInfoBytes);
+        await _messagePublisher.PublishWithRetryAsync(QUEUE_NAME, paymentInfoBytes);
+    }
+    
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _messageConsumer.Consume(APPROVED_QUEUE);
+        return Task.CompletedTask;
     }
 }
