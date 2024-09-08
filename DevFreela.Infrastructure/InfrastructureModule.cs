@@ -3,6 +3,8 @@ using DevFreela.Infrastructure.CacheStorage;
 using DevFreela.Infrastructure.Persistence;
 using DevFreela.Infrastructure.Persistence.Repositories;
 using DevFreela.Infrastructure.Services.AuthService;
+using DevFreela.Infrastructure.Services.MessageBus;
+using DevFreela.Infrastructure.Services.PaymentService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +19,9 @@ public static class InfrastructureModule
             .AddAuth()
             .AddRedisCache()
             .AddRepository()
-            .AddData(configuration);
+            .AddData(configuration)
+            .AddMessageBus(configuration)
+            .AddPaymentService();;
         
         return services;
     }
@@ -40,6 +44,12 @@ public static class InfrastructureModule
         return services;
     }
 
+    private static IServiceCollection AddPaymentService(this IServiceCollection services)
+    {
+        services.AddScoped<IPaymentService, PaymentService>();
+        return services;
+    }
+    
     private static IServiceCollection AddRedisCache(this IServiceCollection services)
     {
         services.AddStackExchangeRedisCache(options =>
@@ -49,6 +59,20 @@ public static class InfrastructureModule
         });
 
         services.AddTransient<ICacheService, CacheService>();
+        
+        return services;
+    }
+    
+    private static IServiceCollection AddMessageBus(this IServiceCollection services, IConfiguration configuration)
+    {
+        var rabbitMqSection = configuration.GetSection("RabbitMQ");
+        
+        var rabbitMqHost = rabbitMqSection.GetConnectionString("RabbitMQ__UserName") ?? "localhost";
+        var rabbitMqUser = rabbitMqSection.GetConnectionString("RabbitMQ__UserName") ?? "guest";
+        var rabbitMqPassword = rabbitMqSection.GetConnectionString("RabbitMQ__Password") ?? "guest";
+
+        services.AddScoped<IMessageBusService>(provider => 
+            new MessageBusService(rabbitMqHost, rabbitMqUser, rabbitMqPassword));
         
         return services;
     }
