@@ -20,7 +20,7 @@ public static class InfrastructureModule
             .AddRedisCache()
             .AddRepository()
             .AddData(configuration)
-            .AddMessageBus(configuration)
+            .AddRabbitMQ(configuration)
             .AddPaymentService();;
         
         return services;
@@ -63,7 +63,7 @@ public static class InfrastructureModule
         return services;
     }
     
-    private static IServiceCollection AddMessageBus(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddRabbitMQ(this IServiceCollection services, IConfiguration configuration)
     {
         var rabbitMqSection = configuration.GetSection("RabbitMQ");
         
@@ -71,8 +71,12 @@ public static class InfrastructureModule
         var rabbitMqUser = rabbitMqSection.GetConnectionString("RabbitMQ__UserName") ?? "guest";
         var rabbitMqPassword = rabbitMqSection.GetConnectionString("RabbitMQ__Password") ?? "guest";
 
-        services.AddScoped<IMessageBusService>(provider => 
-            new MessageBusService(rabbitMqHost, rabbitMqUser, rabbitMqPassword));
+
+        services.AddScoped<IMessagePublisher>(provider =>
+            new RabbitMQPublisher(rabbitMqHost, rabbitMqUser, rabbitMqPassword));
+        
+        services.AddScoped<IMessageConsumer>(provider =>
+            new RabbitMQConsumer(rabbitMqHost, rabbitMqUser, rabbitMqPassword, provider));
         
         return services;
     }
