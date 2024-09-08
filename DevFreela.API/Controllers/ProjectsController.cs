@@ -95,16 +95,18 @@ public class ProjectsController : ControllerBase
     }
     
     [HttpPut("{id}/complete")]
-    public async Task<IActionResult> Complete(int id)
+    public async Task<IActionResult> Complete(int id, CompleteProjectCommand command)
     {
-        var result = await _mediator.Send(new CompleteProjectCommand(id));
+        var commandWithId = command.Id == 0 ? command with { Id = id } : command;
+
+        var result = await _mediator.Send(commandWithId);
 
         if (!result.IsSuccess)
         {
             return BadRequest(result.Message);
         }
         
-        return NoContent();
+        return Accepted(result);
     }
 
     [HttpPost("{id}/comments")]

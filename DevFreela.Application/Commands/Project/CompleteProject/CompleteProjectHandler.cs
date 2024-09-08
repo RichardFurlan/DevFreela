@@ -1,5 +1,7 @@
 using DevFreela.Application.DTOs;
+using DevFreela.Domain.DTOs;
 using DevFreela.Domain.Respositories;
+using DevFreela.Infrastructure.Services.PaymentService;
 using MediatR;
 
 namespace DevFreela.Application.Commands.Project.CompleteProject;
@@ -7,9 +9,11 @@ namespace DevFreela.Application.Commands.Project.CompleteProject;
 public class CompleteProjectHandler : IRequestHandler<CompleteProjectCommand, ResultViewModel>
 {
     private readonly IProjectRepository _projectRepository;
-    public CompleteProjectHandler(IProjectRepository projectRepository)
+    private readonly IPaymentService _paymentService;
+    public CompleteProjectHandler(IProjectRepository projectRepository, IPaymentService paymentService)
     {
         _projectRepository = projectRepository;
+        _paymentService = paymentService;
     }
     public async Task<ResultViewModel> Handle(CompleteProjectCommand request, CancellationToken cancellationToken)
     {
@@ -19,12 +23,13 @@ public class CompleteProjectHandler : IRequestHandler<CompleteProjectCommand, Re
         {
             return ResultViewModel.Error("Projeto não encontrado");
         }
+
+        var paymentInfoDto = new PaymentInfoDTO(project.Id, request.CreditCardNumber, request.Cvv, request.ExpiresAt,
+            request.FullName, project.TotalCost);
         
-        var complete = project.Complete();
-        if (!complete)
-        {
-            return ResultViewModel.Error("O projeto não pode ser completado. Apenas projetos com a situação andamento e com pagamento pendente podem ser completados");
-        }
+        _paymentService.ProcessPayment(paymentInfoDto);
+        
+        project.SetPaymentPending();
 
         await _projectRepository.UpdateAsync(project);
 

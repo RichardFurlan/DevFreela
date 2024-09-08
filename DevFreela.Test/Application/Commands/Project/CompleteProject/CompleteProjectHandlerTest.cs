@@ -2,6 +2,7 @@ using DevFreela.Application.Commands.Project.CompleteProject;
 using DevFreela.Application.Commands.Project.DeleteProject;
 using DevFreela.Domain.Enums;
 using DevFreela.Domain.Respositories;
+using DevFreela.Infrastructure.Services.PaymentService;
 using Moq;
 
 namespace DevFreela.Test.Application.Commands.Project.CompleteProject;
@@ -15,13 +16,14 @@ public class CompleteProjectHandlerTest
         var projectMock = new Domain.Entities.Project("Nome do projeto", "Descricao do projeto", 1, 2, 10000);
         projectMock.Start();
 
+        var processPaymentMock = new Mock<IPaymentService>();
         var projectRepositoryMock = new Mock<IProjectRepository>();
         projectRepositoryMock
             .Setup(pr => pr.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync(projectMock);
 
-        var handler = new CompleteProjectHandler(projectRepositoryMock.Object);
-        var command = new CompleteProjectCommand(1);
+        var handler = new CompleteProjectHandler(projectRepositoryMock.Object, processPaymentMock.Object);
+        var command = new CompleteProjectCommand(1, "1234567", "123", "12/28", "Teste", 10000);
 
         //Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -42,8 +44,9 @@ public class CompleteProjectHandlerTest
             .Setup(pr => pr.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync((Domain.Entities.Project)null);
 
-        var handler = new CompleteProjectHandler(projectRepositoryMock.Object);
-        var command = new CompleteProjectCommand(1);
+        var processPaymentMock = new Mock<IPaymentService>();
+        var handler = new CompleteProjectHandler(projectRepositoryMock.Object, processPaymentMock.Object);
+        var command = new CompleteProjectCommand(1, "1234567", "123", "12/28", "Teste", 10000);
 
         //Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -60,14 +63,14 @@ public class CompleteProjectHandlerTest
         //Arrange
         var projectMock = new Domain.Entities.Project("Nome do projeto", "Descricao do projeto", 1, 2, 10000);
 
-
+        var processPaymentMock = new Mock<IPaymentService>();
         var projectRepositoryMock = new Mock<IProjectRepository>();
         projectRepositoryMock
             .Setup(pr => pr.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync(projectMock);
 
-        var handler = new CompleteProjectHandler(projectRepositoryMock.Object);
-        var command = new CompleteProjectCommand(1);
+        var handler = new CompleteProjectHandler(projectRepositoryMock.Object, processPaymentMock.Object);
+        var command = new CompleteProjectCommand(1, "1234567", "123", "12/28", "Teste", 10000);
 
         //Act
         var result = await handler.Handle(command, CancellationToken.None);
