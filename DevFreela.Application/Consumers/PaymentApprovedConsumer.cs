@@ -1,9 +1,9 @@
 using System.Text;
-using DevFreela.Domain.IntegrationEvents;
 using DevFreela.Domain.Respositories;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Text.Json;
+using DevFreela.Domain.TransferObjects;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
