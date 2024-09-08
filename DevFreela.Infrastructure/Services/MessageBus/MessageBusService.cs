@@ -6,6 +6,9 @@ namespace DevFreela.Infrastructure.Services.MessageBus;
 public class MessageBusService : IMessageBusService
 {
     private readonly IModel _channel;
+    private const int MAX_RETRIES = 3;
+    private const int DELAY_IN_SECONDS = 2;
+
     public MessageBusService(string hostName, string userName, string password)
     {
         var factory = new ConnectionFactory()
@@ -18,7 +21,16 @@ public class MessageBusService : IMessageBusService
         var connection = factory.CreateConnection();
         _channel = connection.CreateModel();
     }
-    public void Publish(string queue, byte[] message)
+
+    public async Task PublishWithRetryAsync(string queue, byte[] message)
+    {
+        await RetryAsync(async () =>
+        {
+            Publish(queue, message);
+        }, MAX_RETRIES, DELAY_IN_SECONDS);
+    }
+    
+    private void Publish(string queue, byte[] message)
     {
         _channel.QueueDeclare(
             queue: queue,
@@ -33,7 +45,30 @@ public class MessageBusService : IMessageBusService
             routingKey: queue,
             basicProperties: null,
             body: message
-            );
+        );
         
+    }
+
+    private async Task RetryAsync(Func<Task> action, int maxRetries = 3, int delayInSeconds = 2)
+    {
+        int attempt = 0;
+        while (attempt < maxRetries)
+        {
+            try
+            {
+                await action();
+                return;
+            }
+            catch
+            {
+                attempt++;
+                if (attempt >= maxRetries)
+                {
+                    throw;
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(delayInSeconds));
+            }
+        }
     }
 }
