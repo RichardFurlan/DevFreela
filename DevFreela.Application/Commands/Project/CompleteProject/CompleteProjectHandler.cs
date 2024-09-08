@@ -1,6 +1,6 @@
 using DevFreela.Application.DTOs;
-using DevFreela.Domain.DTOs;
 using DevFreela.Domain.Respositories;
+using DevFreela.Domain.TransferObjects;
 using DevFreela.Infrastructure.Services.PaymentService;
 using MediatR;
 
@@ -27,7 +27,7 @@ public class CompleteProjectHandler : IRequestHandler<CompleteProjectCommand, Re
         var paymentInfoDto = new PaymentInfoDTO(project.Id, request.CreditCardNumber, request.Cvv, request.ExpiresAt,
             request.FullName, project.TotalCost);
         
-        _paymentService.ProcessPayment(paymentInfoDto);
+        await _paymentService.ProcessPaymentAsync(paymentInfoDto);
         
         project.SetPaymentPending();
 
