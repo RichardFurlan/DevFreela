@@ -52,24 +52,20 @@ public class Project : BaseEntity
         return false;
     }
 
-    public bool Complete()
+    public void Complete()
     {
-        if (Status == EnumProjectStatus.PaymentPending || Status == EnumProjectStatus.InProgress)
+        if (Status == EnumProjectStatus.PaymentPending)
         {
             Status = EnumProjectStatus.Completed;
             CompletedAt = DateTime.Now;
-            return true;
         }
-
-        return false;
+        
     }
 
     public void SetPaymentPending()
     {
-        if (Status == EnumProjectStatus.InProgress)
-        {
-            Status = EnumProjectStatus.PaymentPending;
-        }
+        Status = EnumProjectStatus.PaymentPending;
+        CompletedAt = null;
     }
 
     public void Update(string title, string description, decimal totalCost)
