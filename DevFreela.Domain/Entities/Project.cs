@@ -62,10 +62,13 @@ public class Project : BaseEntity
         
     }
 
-    public void SetPaymentPending()
+    public bool SetPaymentPending()
     {
+        if (Status != EnumProjectStatus.InProgress)
+            return false;
         Status = EnumProjectStatus.PaymentPending;
         CompletedAt = null;
+        return true;
     }
 
     public void Update(string title, string description, decimal totalCost)

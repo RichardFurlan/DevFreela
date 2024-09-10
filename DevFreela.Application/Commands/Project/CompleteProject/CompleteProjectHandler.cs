@@ -29,7 +29,11 @@ public class CompleteProjectHandler : IRequestHandler<CompleteProjectCommand, Re
         
         await _paymentService.ProcessPaymentAsync(paymentInfoDto);
         
-        project.SetPaymentPending();
+        var isSuccess = project.SetPaymentPending();
+        if (!isSuccess)
+        {
+            return ResultViewModel.Error("O projeto não está em andamento, portanto não pode ser alterado para pagamento pendente.");
+        }
 
         await _projectRepository.UpdateAsync(project);
 
