@@ -82,7 +82,7 @@ public class CompleteProjectHandlerTest
         //Assert
         Assert.False(result.IsSuccess);
         Assert.Equal(EnumProjectStatus.Created, projectMock.Status);
-        Assert.Equal("O projeto não pode ser completado. Apenas projetos com a situação andamento e com pagamento pendente podem ser completados", result.Message);
+        Assert.Equal("O projeto não está em andamento, portanto não pode ser alterado para pagamento pendente.", result.Message);
         projectRepositoryMock.Verify(pr => pr.UpdateAsync(It.IsAny<Domain.Entities.Project>()), Times.Never);
     }
 }
