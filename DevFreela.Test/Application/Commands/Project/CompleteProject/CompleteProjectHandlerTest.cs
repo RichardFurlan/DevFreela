@@ -2,6 +2,7 @@ using DevFreela.Application.Commands.Project.CompleteProject;
 using DevFreela.Application.Commands.Project.DeleteProject;
 using DevFreela.Domain.Enums;
 using DevFreela.Domain.Respositories;
+using DevFreela.Domain.TransferObjects;
 using DevFreela.Infrastructure.Services.PaymentService;
 using Moq;
 
@@ -16,13 +17,17 @@ public class CompleteProjectHandlerTest
         var projectMock = new Domain.Entities.Project("Nome do projeto", "Descricao do projeto", 1, 2, 10000);
         projectMock.Start();
 
-        var processPaymentMock = new Mock<IPaymentService>();
+        var paymentServiceMock = new Mock<IPaymentService>();
+        paymentServiceMock
+            .Setup(ps => ps.ProcessPaymentAsync(It.IsAny<PaymentInfoDTO>()))
+            .Returns(Task.CompletedTask);
+        
         var projectRepositoryMock = new Mock<IProjectRepository>();
         projectRepositoryMock
             .Setup(pr => pr.GetByIdAsync(It.IsAny<int>()))
             .ReturnsAsync(projectMock);
 
-        var handler = new CompleteProjectHandler(projectRepositoryMock.Object, processPaymentMock.Object);
+        var handler = new CompleteProjectHandler(projectRepositoryMock.Object, paymentServiceMock.Object);
         var command = new CompleteProjectCommand(1, "1234567", "123", "12/28", "Teste", 10000);
 
         //Act
@@ -30,9 +35,8 @@ public class CompleteProjectHandlerTest
         
         //Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal(EnumProjectStatus.Completed, projectMock.Status);
-        Assert.NotNull(projectMock.CompletedAt);
-        projectRepositoryMock.Verify(pr => pr.UpdateAsync(It.Is<Domain.Entities.Project>(p => p.Status == EnumProjectStatus.Completed)), Times.Once);
+        Assert.Equal(EnumProjectStatus.PaymentPending, projectMock.Status);
+        projectRepositoryMock.Verify(pr => pr.UpdateAsync(It.Is<Domain.Entities.Project>(p => p.Status == EnumProjectStatus.PaymentPending)), Times.Once);
     }
     
     [Fact]
