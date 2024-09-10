@@ -15,8 +15,8 @@ public class AuthService : IAuthService
     }
     public string GenerateJwtToken(string email)
     {
-        var issuer = _configuration["Jtw:Issuer"];
-        var audience = _configuration["Jtw:Audience"];
+        var issuer = _configuration["Jwt:Issuer"];
+        var audience = _configuration["Jwt:Audience"];
         var key = _configuration["Jwt:Key"];
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));

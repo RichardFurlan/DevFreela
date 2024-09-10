@@ -7,10 +7,12 @@ using DevFreela.Application.Commands.Project.UpdateProject;
 using DevFreela.Application.Queries.Project.GetAllProjects;
 using DevFreela.Application.Queries.Project.GetProjectById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers;
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class ProjectsController : ControllerBase
 {    
