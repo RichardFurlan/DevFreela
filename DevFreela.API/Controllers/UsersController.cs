@@ -4,10 +4,12 @@ using DevFreela.Application.Commands.User.InsertUserSkill;
 using DevFreela.Application.Commands.User.LoginUser;
 using DevFreela.Application.Queries.User.GetUserById;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers;
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class UsersController : ControllerBase
 {
@@ -32,6 +34,7 @@ public class UsersController : ControllerBase
     
     
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<IActionResult> Post(InsertUserCommand command)
     {
         var result = await _mediator.Send(command);
@@ -45,6 +48,7 @@ public class UsersController : ControllerBase
     }
     
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<IActionResult> Post(LoginUserCommand command)
     {
         var result = await _mediator.Send(command);
