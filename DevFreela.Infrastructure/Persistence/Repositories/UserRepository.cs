@@ -40,4 +40,10 @@ public class UserRepository : IUserRepository
     {
         return await _genericRepository.ExistsAsync(id);
     }
+
+    public async Task<int> AddAsync(User user)
+    {
+        var userId = await _genericRepository.AddAsync(user);
+        return userId;
+    }
 }
