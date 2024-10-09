@@ -4,10 +4,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DevFreela.Infrastructure.Persistence.Repositories;
 
-public class SkillRepository : GenericRepository<Skill>, ISkillRepository
+public class SkillRepository : ISkillRepository
 {
-    public SkillRepository(DevFreelaDbContext context) : base(context)
+    private readonly IGenericRepository<Skill> _genericRepository;
+    private readonly DevFreelaDbContext _context;
+    public SkillRepository(DevFreelaDbContext context, IGenericRepository<Skill> genericRepository)
     {
+        _context = context;
+        _genericRepository = genericRepository;
+    }
+
+    public async Task<int> AddAsync(Skill skill)
+    {
+        var skillId = await _genericRepository.AddAsync(skill);
+        return skillId;
     }
 
     public async Task<List<Skill>> GetAll(string search, int page, int size)

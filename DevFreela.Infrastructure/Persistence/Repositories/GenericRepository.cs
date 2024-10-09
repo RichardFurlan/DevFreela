@@ -6,37 +6,43 @@ namespace DevFreela.Infrastructure.Persistence.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {
-    protected readonly DevFreelaDbContext _context;
-    protected DbSet<T> Entity => _context.Set<T>();
+    private readonly DevFreelaDbContext _context;
+    private readonly DbSet<T> _dbSet;
     public GenericRepository(DevFreelaDbContext context)
     {
         _context = context;
+        _dbSet = _context.Set<T>();
     }
     public async Task<T?> GetByIdAsync(int id)
     {
-        return await Entity.SingleOrDefaultAsync(p => p.Id == id);
+        return await _dbSet.SingleOrDefaultAsync(p => p.Id == id);
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await Entity.ToListAsync();
+        return await _dbSet.ToListAsync();
     }
 
     public async Task<bool> ExistsAsync(int id)
     {
-        return await Entity.AnyAsync(e => e.Id == id);;
+        return await _dbSet.AnyAsync(e => e.Id == id);;
     }
 
     public async Task<int> AddAsync(T entity)
     {
-        await Entity.AddAsync(entity);
+        await _dbSet.AddAsync(entity);
         await _context.SaveChangesAsync();
         return entity.Id;
     }
 
     public async Task UpdateAsync(T entity)
     {
-        Entity.Update(entity);
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task SaveAsync()
+    {
         await _context.SaveChangesAsync();
     }
 }
