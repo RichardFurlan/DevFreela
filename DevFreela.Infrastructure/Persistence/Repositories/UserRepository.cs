@@ -22,7 +22,13 @@ public class UserRepository : IUserRepository
             .Where(p => !p.IsDeleted)
             .SingleOrDefaultAsync(u => u.Id == id);
     }
-    
+
+    public async Task<User?> GetByIdAsync(int id)
+    {
+        var user = await _genericRepository.GetByIdAsync(id);
+        return user;
+    }
+
     public async Task<User?> GetUserByEmailAndPasswordAsync(string email, string passwordHash)
     {
         return await _context
@@ -39,6 +45,11 @@ public class UserRepository : IUserRepository
     public async Task<bool> ExistsAsync(int id)
     {
         return await _genericRepository.ExistsAsync(id);
+    }
+
+    public async Task UpdateAsync(User user)
+    {
+        await _genericRepository.UpdateAsync(user);
     }
 
     public async Task<int> AddAsync(User user)
