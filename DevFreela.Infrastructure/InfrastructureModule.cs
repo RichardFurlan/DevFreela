@@ -45,6 +45,7 @@ public static class InfrastructureModule
         services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<ISkillRepository, SkillRepository>();        
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
         return services;
     }
