@@ -1,10 +1,14 @@
 using DevFreela.Domain.Respositories;
+using DevFreela.Domain.TransferObjects;
 using DevFreela.Infrastructure.CacheStorage;
 using DevFreela.Infrastructure.Persistence;
 using DevFreela.Infrastructure.Persistence.Repositories;
 using DevFreela.Infrastructure.Services.AuthService;
 using DevFreela.Infrastructure.Services.MessageBus;
+using DevFreela.Infrastructure.Services.MessageBus.Consumer;
+using DevFreela.Infrastructure.Services.MessageBus.Publisher;
 using DevFreela.Infrastructure.Services.PaymentService;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +25,8 @@ public static class InfrastructureModule
             .AddRepository()
             .AddData(configuration)
             .AddRabbitMQ(configuration)
-            .AddPaymentService();;
+            .AddPaymentService()
+            .AddConsumers();
         
         return services;
     }
@@ -65,19 +70,31 @@ public static class InfrastructureModule
     
     private static IServiceCollection AddRabbitMQ(this IServiceCollection services, IConfiguration configuration)
     {
-        var rabbitMqSection = configuration.GetSection("RabbitMQ");
-        
-        var rabbitMqHost = rabbitMqSection.GetConnectionString("RabbitMQ__UserName") ?? "localhost";
-        var rabbitMqUser = rabbitMqSection.GetConnectionString("RabbitMQ__UserName") ?? "guest";
-        var rabbitMqPassword = rabbitMqSection.GetConnectionString("RabbitMQ__Password") ?? "guest";
+        var rabbitMqSection = configuration.GetSection("RabbitMQ"); 
+        var rabbitMqOptions = new RabbitMQOptions(); 
+        rabbitMqSection.Bind(rabbitMqOptions); 
 
-
-        services.AddScoped<IMessagePublisher>(provider =>
-            new RabbitMQPublisher(rabbitMqHost, rabbitMqUser, rabbitMqPassword));
+        services.AddMassTransit(x =>
+        {
+            x.UsingRabbitMq((context, cfg) =>
+            {
+                cfg.Host(rabbitMqOptions.Host, h =>
+                {
+                    h.Username(rabbitMqOptions.Username);
+                    h.Password(rabbitMqOptions.Password);
+                });
+            });
+        });
         
-        services.AddScoped<IMessageConsumer>(provider =>
-            new RabbitMQConsumer(rabbitMqHost, rabbitMqUser, rabbitMqPassword, provider));
+        services.AddMassTransitHostedService();
+        services.AddScoped<IMessagePublisher, RabbitMQPublisher>();
         
+        return services;
+    }
+    
+    public static IServiceCollection AddConsumers(this IServiceCollection services)
+    {
+        services.AddScoped<IConsumer<PaymentApprovedIntegrationEvent>, PaymentApprovedConsumer>();
         return services;
     }
 
@@ -87,4 +104,15 @@ public static class InfrastructureModule
         
         return services;
     }
+
+    #region Options
+    public class RabbitMQOptions
+    {
+        public string Host { get; set; } = "localhost";
+        public string Username { get; set; } = "guest";
+        public string Password { get; set; } = "guest";
+    }
+    
+
+    #endregion
 }

@@ -1,4 +1,4 @@
-namespace DevFreela.Infrastructure.Services.MessageBus;
+namespace DevFreela.Infrastructure.Services.MessageBus.Publisher;
 
 public interface IMessagePublisher
 {
