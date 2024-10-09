@@ -4,10 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DevFreela.Infrastructure.Persistence.Repositories;
 
-public class UserRepository : GenericRepository<User>, IUserRepository
+public class UserRepository : IUserRepository
 {
-    public UserRepository(DevFreelaDbContext context) : base(context)
+    private readonly DevFreelaDbContext _context;
+    private readonly GenericRepository<User> _genericRepository;
+    public UserRepository(DevFreelaDbContext context, GenericRepository<User> genericRepository)
     {
+        _context = context;
+        _genericRepository = genericRepository;
     }
 
     public async Task<User?> GetDetailsById(int id)
@@ -29,6 +33,11 @@ public class UserRepository : GenericRepository<User>, IUserRepository
     public async Task AddUserSkill(UserSkill userSkill)
     {
         await _context.UserSkills.AddAsync(userSkill);
-        await _context.SaveChangesAsync();
+        await _genericRepository.SaveAsync();
+    }
+
+    public async Task<bool> ExistsAsync(int id)
+    {
+        return await _genericRepository.ExistsAsync(id);
     }
 }

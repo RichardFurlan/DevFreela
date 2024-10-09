@@ -4,11 +4,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DevFreela.Infrastructure.Persistence.Repositories;
 
-public class ProjectRepository : GenericRepository<Project>, IProjectRepository
+public class ProjectRepository : IProjectRepository
 {
-    public ProjectRepository(DevFreelaDbContext context) : base(context)
+    private readonly IGenericRepository<Project> _genericRepository;
+    private readonly DevFreelaDbContext _context;
+
+    public ProjectRepository(IGenericRepository<Project> genericRepository, DevFreelaDbContext context)
     {
+        _genericRepository = genericRepository;
+        _context = context;
     }
+
+    public async Task<int> AddAsync(Project project)
+    {
+        var projectId = await _genericRepository.AddAsync(project);
+        return projectId;
+    }
+
+    public async Task<Project?> GetByIdAsync(int id)
+    {
+        var project = await _genericRepository.GetByIdAsync(id);
+        return project;
+    }
+
+    public Task UpdateAsync(Project project)
+    {
+        _genericRepository.UpdateAsync(project);
+        return Task.CompletedTask;
+    }
+
+    public async Task<bool> ExistsAsync(int id)
+    {
+        return await _genericRepository.ExistsAsync(id);
+    }
+
     public async Task<List<Project>> GetAll(string search, int page, int size)
     {
         return await _context.Projects
@@ -33,6 +62,6 @@ public class ProjectRepository : GenericRepository<Project>, IProjectRepository
     public async Task AddComment(ProjectComment comment)
     {
         await _context.ProjectComments.AddAsync(comment);
-        await _context.SaveChangesAsync();
+        await _genericRepository.SaveAsync();
     }
 }
